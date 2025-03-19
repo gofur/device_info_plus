@@ -2,27 +2,29 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FLTDeviceInfoPlusPlugin.h"
+#import "FPPDeviceInfoPlusPlugin.h"
 #import <sys/utsname.h>
 
-@implementation FLTDeviceInfoPlusPlugin
+@implementation FPPDeviceInfoPlusPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   FlutterMethodChannel *channel = [FlutterMethodChannel
       methodChannelWithName:@"dev.fluttercommunity.plus/device_info"
             binaryMessenger:[registrar messenger]];
-  FLTDeviceInfoPlusPlugin *instance = [[FLTDeviceInfoPlusPlugin alloc] init];
+  FPPDeviceInfoPlusPlugin *instance = [[FPPDeviceInfoPlusPlugin alloc] init];
   [registrar addMethodCallDelegate:instance channel:channel];
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call
                   result:(FlutterResult)result {
-  if ([@"getIosDeviceInfo" isEqualToString:call.method]) {
+  if ([@"getDeviceInfo" isEqualToString:call.method]) {
     UIDevice *device = [UIDevice currentDevice];
     struct utsname un;
     uname(&un);
 
+    NSNumber *isPhysicalNumber =
+        [NSNumber numberWithBool:[self isDevicePhysical]];
     NSString *machine;
-    if ([[self isDevicePhysical] isEqualToString:@"true"]) {
+    if ([self isDevicePhysical]) {
       machine = @(un.machine);
     } else {
       machine = [[NSProcessInfo processInfo]
@@ -37,7 +39,7 @@
       @"localizedModel" : [device localizedModel],
       @"identifierForVendor" : [[device identifierForVendor] UUIDString]
           ?: [NSNull null],
-      @"isPhysicalDevice" : [self isDevicePhysical],
+      @"isPhysicalDevice" : isPhysicalNumber,
       @"utsname" : @{
         @"sysname" : @(un.sysname),
         @"nodename" : @(un.nodename),
@@ -52,11 +54,12 @@
 }
 
 // return value is false if code is run on a simulator
-- (NSString *)isDevicePhysical {
+- (BOOL)isDevicePhysical {
+  BOOL isPhysicalDevice = NO;
 #if TARGET_OS_SIMULATOR
-  NSString *isPhysicalDevice = @"false";
+  isPhysicalDevice = NO;
 #else
-  NSString *isPhysicalDevice = @"true";
+  isPhysicalDevice = YES;
 #endif
 
   return isPhysicalDevice;
