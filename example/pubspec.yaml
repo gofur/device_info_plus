@@ -8,8 +8,7 @@ dependencies:
     path: ../
 
 dependency_overrides:
-  device_info_plus_platform_interface:
-    path: ../../device_info_plus_platform_interface
+  device_info_plus_platform_interface: ^6.0.1
 
 dev_dependencies:
   flutter_driver:
