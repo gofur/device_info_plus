@@ -19,6 +19,6 @@ Downloaded by pub (not CocoaPods).
   s.dependency 'Flutter'
   s.platform = :ios, '8.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
-  s.resource_bundles = {'device_info_plus_privacy' => ['Classes/PrivacyInfo.xcprivacy']}
+  s.resource_bundles = {'device_info_plus_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end
 
